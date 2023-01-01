@@ -143,10 +143,10 @@ def getUserTotal(user_id:str):
     Returns:
         str: total of user
     """    
-    sql = """SELECT SUM(items.total_cost) AS user_total FROM (owners INNER JOIN items ON owners.item_id = items.id) WHERE owners.user_id = %s ;"""
+    sql = """SELECT ROUND((SUM(user_total.final_costs))::numeric,2) FROM (SELECT (items.cost_per_user * (1 + (items.tax / 100))) AS final_costs FROM (owners INNER JOIN items ON owners.item_id = items.id) WHERE owners.user_id = %s)user_total ;"""
     args = [user_id]
     res = exec_get_one(sql, args)
-    return res
+    return float(res[0])
 
 def getItemTotalCost(item_id:str):
     """retrieves total cost of an item

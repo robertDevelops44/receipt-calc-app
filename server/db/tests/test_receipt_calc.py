@@ -104,6 +104,15 @@ class TestReceiptCalc(unittest.TestCase):
         expected = 23.67
         self.assertEqual(actual, expected)
         
+    def test_get_user_total(self):
+        """tests retrieval of user total
+        """        
+        assignOwner(1,1)
+
+        actual = getUserTotal(1)
+        expected = 26.34
+        self.assertEqual(actual, expected)
+
 
 
 
