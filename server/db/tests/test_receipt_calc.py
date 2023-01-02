@@ -124,6 +124,24 @@ class TestReceiptCalc(unittest.TestCase):
         expected = 23.67
         self.assertEqual(actual, expected)
         
+    def test_edit_user(self):
+        """tests editing info of a user
+        """        
+        res = editUser(1,"Bobster")
+
+        actual = res
+        expected = "Bobster"
+        self.assertEqual(actual, expected)
+    
+    def test_edit_item(self):
+        """tests editing info of an item
+        """
+        editItem(2, "Target", "Potats", 8, 9.99, 9.99)
+
+        actual = getItem(2)
+        expected = (2, 'Target', 'Potats', 8.0, 9.99, 9.99)
+        self.assertEqual(actual, expected)
+        
 
 
 
