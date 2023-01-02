@@ -28,6 +28,33 @@ def addUser(name:str):
     res = exec_insert_returning(sql, args)
     return res
 
+def removeUser(user_id:str):
+    """removes a user from users table
+        removes owner assignments with user
+            updates items from owner assignments to new cost per user
+
+    Args:
+        user_id (str): id of user
+
+    Returns:
+        str: success/fail message
+    """    
+    owners = getAssignments(user_id)
+    sql = """DELETE FROM users WHERE id = %(user_id)s ;
+                DELETE FROM owners WHERE user_id = %(user_id)s ;"""
+    for assignment in owners:
+        item_id = assignment[1]
+        update_query = """UPDATE items SET cost_per_user = 
+                            ROUND(((SELECT total_cost FROM items WHERE id = {item_id}) / (SELECT COUNT(*) FROM owners WHERE item_id = {item_id}))::numeric, 2) 
+                                WHERE id = {item_id} ;""".format(item_id=item_id)
+        sql += update_query
+    args = {'user_id': user_id}
+    try:
+        exec_commit(sql,args)
+        return "Successfully deleted user"
+    except:
+        return "Failed to delete user"
+
 def addItem(store:str, name:str, cost:str, tax:str):
     """adds an item to items table
 
@@ -56,9 +83,9 @@ def removeItem(item_id:str):
     Returns:
         str: success/fail message
     """    
-    sql = """DELETE FROM items WHERE id = %s ;
-                DELETE FROM owners WHERE item_id = %s ;"""
-    args = [item_id, item_id]
+    sql = """DELETE FROM items WHERE id = %(item_id)s ;
+                DELETE FROM owners WHERE item_id = %(item_id)s ;"""
+    args = {'item_id':item_id}
     try:
         exec_commit(sql,args)
         return "Successfully deleted item"
@@ -77,11 +104,11 @@ def assignOwner(user_id:str, item_id:str):
     """    
     ownerExists = ownerAssignmentExists(user_id,item_id)
     if ownerExists == False:
-        sql = """INSERT INTO owners (user_id, item_id) VALUES (%s, %s) ;
+        sql = """INSERT INTO owners (user_id, item_id) VALUES (%(user_id)s, %(item_id)s) ;
                     UPDATE items SET cost_per_user = 
-                        ROUND(((SELECT total_cost FROM items WHERE id = %s) / (SELECT COUNT(*) FROM owners WHERE item_id = %s))::numeric, 2) 
-                            WHERE id = %s ;"""
-        args = [user_id, item_id, item_id, item_id, item_id]
+                        ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
+                            WHERE id = %(item_id)s ;"""
+        args = {'user_id':user_id, 'item_id':item_id}
         try:
             exec_commit(sql,args)
             return "Successfully assigned owner"
@@ -100,11 +127,11 @@ def removeOwner(user_id:str, item_id:str):
     Returns:
         str: success/fail message
     """    
-    sql = """DELETE FROM owners WHERE user_id = %s AND item_id = %s ;                
+    sql = """DELETE FROM owners WHERE user_id = %(user_id)s AND item_id = %(item_id)s ;                
                 UPDATE items SET cost_per_user = 
-                    ROUND(((SELECT total_cost FROM items WHERE id = %s) / (SELECT COUNT(*) FROM owners WHERE item_id = %s))::numeric, 2) 
-                        WHERE id = %s ;"""
-    args = [user_id, item_id, item_id, item_id, item_id]
+                    ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
+                        WHERE id = %(item_id)s ;"""
+    args = {'user_id':user_id, 'item_id':item_id}
     try:
         exec_commit(sql,args)
         return "Successfully removed owner"
@@ -189,4 +216,29 @@ def getOwnerAssignment(owner_id):
     sql = """SELECT * FROM owners WHERE id = %s ;"""
     args = [owner_id]
     res = exec_get_all(sql, args)
+    return res
+
+def getUser(user_id):
+    """retrieves user id and user name from user_id
+
+    Args:
+        user_id (str): id of user
+
+    Returns:
+        list: user id and user name
+    """    
+    sql = """SELECT row_to_json(user) FROM (SELECT * FROM users WHERE id = %s)user ;"""
+    args = [user_id]
+    res = exec_get_all(sql, args)
+    return res
+
+def getAssignments(user_id):
+    """retrieves all owners
+
+    Returns:
+        _type_: _description_
+    """    
+    sql = """SELECT user_id,item_id FROM owners WHERE user_id = %s;"""
+    args = [user_id]
+    res = exec_get_all(sql,args)
     return res

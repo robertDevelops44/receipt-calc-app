@@ -49,7 +49,7 @@ class TestReceiptCalc(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_remove_item(self):
-        """tests removing an item
+        """tests removal of an item
         """
 
         removeItem(3)
@@ -91,7 +91,7 @@ class TestReceiptCalc(unittest.TestCase):
         self.assertEqual(actual, expected)
     
     def test_remove_owner(self):
-        """tests removing an owner assignment that exists
+        """tests removal of an owner assignment that exists
         """
 
         removeOwner(3,3)
@@ -107,13 +107,23 @@ class TestReceiptCalc(unittest.TestCase):
     def test_get_user_total(self):
         """tests retrieval of user total
         """        
+
         assignOwner(1,1)
 
         actual = getUserTotal(1)
         expected = 26.34
         self.assertEqual(actual, expected)
 
+    def test_remove_user(self):
+        """tests removal of a user
+        """
 
+        removeUser(1)
+
+        actual = getItemCostPerUser(3)
+        expected = 23.67
+        self.assertEqual(actual, expected)
+        
 
 
 
