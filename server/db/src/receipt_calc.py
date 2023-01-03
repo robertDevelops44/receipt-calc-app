@@ -1,8 +1,5 @@
 import math
-import os
-from turtle import update
-from src.db_utils import *
-
+from .db_utils import *
 
 """TABLE BUILDING"""
 

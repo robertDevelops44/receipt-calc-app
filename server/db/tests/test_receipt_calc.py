@@ -5,6 +5,8 @@ from tests.db_test_utils import *
 
 class TestReceiptCalc(unittest.TestCase):
     def setUp(self):
+        """builds tables and inserts test data
+        """        
         rebuildTablesWithTestData()
 
     def test_build_tables(self):
