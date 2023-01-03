@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import unittest
 from src.receipt_calc import *
 from src.db_utils import *
