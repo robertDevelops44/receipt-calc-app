@@ -1,11 +1,11 @@
-DROP table if EXISTS people CASCADE;
+DROP table if EXISTS users CASCADE;
 DROP table if EXISTS items CASCADE;
+DROP table if EXISTS owners CASCADE;
 
-CREATE TABLE people (
+CREATE TABLE users (
     id              SERIAL PRIMARY KEY NOT NULL,
-    name            TEXT,
-    total           FLOAT
-)
+    name            TEXT
+);
 
 CREATE TABLE items (
     id              SERIAL PRIMARY KEY NOT NULL,
@@ -14,11 +14,11 @@ CREATE TABLE items (
     tax             FLOAT,
     total_cost      FLOAT,
     cost_per_user   FLOAT
-)
+);
 
 CREATE TABLE owners (
     id              SERIAL PRIMARY KEY NOT NULL,
-    person_id       INTEGER,
+    user_id         INTEGER,
     item_id         INTEGER
-)
+);
 

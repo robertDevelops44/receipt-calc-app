@@ -4,7 +4,7 @@ import os
 
 def connect():
     config = {}
-    yml_path = os.path.join(os.path.dirname(__file__), 'db.yml')
+    yml_path = os.path.join(os.path.dirname(__file__), '../config/db.yml')
     with open(yml_path, 'r') as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
@@ -46,4 +46,14 @@ def exec_commit(sql, args={}):
     conn.commit()
     conn.close()
     return result
+
+def exec_commit_returning_one(sql, args={}):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(sql, args)
+    postgresql_returning = cur.fetchone()[0]
+    conn.commit()
+    conn.close()
+    return postgresql_returning
+
 
