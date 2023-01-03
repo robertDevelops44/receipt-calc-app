@@ -1,7 +1,7 @@
 import unittest
-from src.receipt_calc import *
-from src.db_utils import *
-from tests.db_test_utils import *
+from src.db.src.receipt_calc import *
+from src.db.src.db_utils import *
+from .db_test_utils import *
 
 class TestReceiptCalc(unittest.TestCase):
     def setUp(self):

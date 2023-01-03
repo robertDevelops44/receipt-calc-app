@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse, request
-from db.src.receipt_calc import *
+from src.db.src.receipt_calc import *
 
 class Users(Resource):
     def get(self,user_id):

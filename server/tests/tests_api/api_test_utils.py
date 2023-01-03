@@ -1,5 +1,5 @@
 import requests
-from db.src.db_utils import connect, exec_sql_file
+from src.db.src.db_utils import connect, exec_sql_file
 
 def assert_sql_count(test, sql, n,
                      msg = 'Expected row count did not match query'):

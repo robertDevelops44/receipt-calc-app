@@ -288,10 +288,10 @@ def getUser(user_id):
     Returns:
         list: user id and user name
     """    
-    sql = """SELECT row_to_json(user) FROM (SELECT * FROM users WHERE id = %s)user ;"""
+    sql = """SELECT row_to_json(theUser) FROM (SELECT * FROM users WHERE id = %s)theUser ;"""
     args = [user_id]
     res = exec_get_all(sql, args)
-    return res
+    return res[0]
 
 def getAssignments(user_id):
     """retrieves all owners

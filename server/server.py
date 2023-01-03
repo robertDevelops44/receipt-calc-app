@@ -2,8 +2,8 @@ from flask import Flask
 from flask_restful import Resource, Api
 from flask_cors import CORS
 
-from db.src.db_utils import *
-from api.src.users import *
+from src.db.src.db_utils import *
+from src.api.src.users import *
 
 
 app = Flask(__name__) #create Flask instance
