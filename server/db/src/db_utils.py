@@ -47,7 +47,7 @@ def exec_commit(sql, args={}):
     conn.close()
     return result
 
-def exec_insert_returning(sql, args={}):
+def exec_commit_returning_one(sql, args={}):
     conn = connect()
     cur = conn.cursor()
     cur.execute(sql, args)
