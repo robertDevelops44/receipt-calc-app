@@ -80,7 +80,7 @@ def addItem(store:str, name:str, tax:str, cost:str):
         str: item_id
     """    
     sql = """INSERT INTO items (store,name,tax,total_cost,cost_per_user) VALUES (%s, %s, %s, %s, %s) RETURNING id;"""
-    total_cost = math.floor((cost * (1 + (tax/100)))*100)/100
+    total_cost = math.floor((float(cost) * (1 + (float(tax)/100)))*100)/100
     args = [store,name,tax,total_cost,total_cost]
     res = exec_commit_returning_one(sql, args)
     return res
