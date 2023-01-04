@@ -40,7 +40,7 @@ class TestReceiptCalc(unittest.TestCase):
     def test_add_item(self):
         """tests adding an item
         """        
-        addItem("CVS","Tylenol",7.99,8)
+        addItem("CVS","Tylenol",8,7.99)
         
         actual = getItem(4)
         expected = ({'cost_per_user': 8.62,'id': 4,'name': 'Tylenol','store': 'CVS','tax': 8,'total_cost': 8.62},)

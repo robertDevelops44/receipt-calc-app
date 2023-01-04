@@ -67,14 +67,14 @@ def editUser(user_id:str, name:str):
     res = exec_commit_returning_one(sql,args)
     return res
 
-def addItem(store:str, name:str, cost:str, tax:str):
+def addItem(store:str, name:str, tax:str, cost:str):
     """adds an item to items table
 
     Args:
         store (str): name of store
         name (str): name of item
-        cost (str): cost of item
         tax (str): tax applied to item
+        cost (str): cost of item
 
     Returns:
         str: item_id
