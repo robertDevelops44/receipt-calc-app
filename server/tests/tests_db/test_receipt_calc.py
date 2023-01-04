@@ -43,7 +43,7 @@ class TestReceiptCalc(unittest.TestCase):
         addItem("CVS","Tylenol",7.99,8)
         
         actual = getItem(4)
-        expected = (4, 'CVS', 'Tylenol', 8.0, 8.62, 8.62)
+        expected = ({'cost_per_user': 8.62,'id': 4,'name': 'Tylenol','store': 'CVS','tax': 8,'total_cost': 8.62},)
         self.assertEqual(actual,expected)
     
     def test_remove_item(self):
@@ -131,7 +131,7 @@ class TestReceiptCalc(unittest.TestCase):
         editItem(2, "Target", "Potats", 8, 9.99, 9.99)
 
         actual = getItem(2)
-        expected = (2, 'Target', 'Potats', 8.0, 9.99, 9.99)
+        expected = ({'cost_per_user': 9.99,'id': 2,'name': 'Potats','store': 'Target','tax': 8,'total_cost': 9.99},)
         self.assertEqual(actual, expected)
         
 

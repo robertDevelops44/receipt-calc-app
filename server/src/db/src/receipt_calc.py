@@ -200,7 +200,7 @@ def getItem(item_id:str):
     Returns:
         tuple: id, store, name, tax, total cost, cost per user
     """    
-    sql = """SELECT * FROM items WHERE id = %s ;"""
+    sql = """SELECT row_to_json(the_item) FROM (SELECT * FROM items WHERE id = %s)the_item ;"""
     args = [item_id]
     res = exec_get_all(sql, args)
     return res[0]
@@ -274,7 +274,7 @@ def getOwnerAssignment(owner_id):
     Returns:
         list: tuples of assignment pairs
     """    
-    sql = """SELECT * FROM owners WHERE id = %s ;"""
+    sql = """SELECT row_to_json(the_owner) FROM (SELECT * FROM owners WHERE id = %s)the_owner ;"""
     args = [owner_id]
     res = exec_get_all(sql, args)
     return res
@@ -288,7 +288,7 @@ def getUser(user_id):
     Returns:
         list: user id and user name
     """    
-    sql = """SELECT row_to_json(theUser) FROM (SELECT * FROM users WHERE id = %s)theUser ;"""
+    sql = """SELECT row_to_json(the_user) FROM (SELECT * FROM users WHERE id = %s)the_user ;"""
     args = [user_id]
     res = exec_get_all(sql, args)
     return res[0]
