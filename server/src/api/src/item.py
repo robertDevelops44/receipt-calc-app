@@ -9,7 +9,7 @@ class Item(Resource):
             item_id (str): id of item
 
         Returns:
-            list: item id and item name
+            list: item info
         """          
         res = getItem(item_id)
         return res
