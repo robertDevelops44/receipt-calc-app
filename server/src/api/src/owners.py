@@ -2,6 +2,15 @@ from flask_restful import Resource, reqparse, request
 from src.db.src.receipt_calc import *
 
 class Owners(Resource):
+    def get(self):
+        """retrieves all owner assignments
+
+        Returns:
+            list: owner pairs
+        """        
+        res = getAssignments()
+        return res
+
     def post(self):
         """creates owner assignment
 
