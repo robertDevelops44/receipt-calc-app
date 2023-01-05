@@ -88,7 +88,7 @@ class TestReceiptCalc(unittest.TestCase):
     def test_remove_owner(self):
         """tests removal of an owner assignment that exists
         """
-        removeOwner(3,3)
+        removeOwner(2)
 
         actual = getOwnerAssignment(2)
         expected = []

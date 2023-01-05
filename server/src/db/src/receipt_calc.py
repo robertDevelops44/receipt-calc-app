@@ -143,17 +143,18 @@ def assignOwner(user_id:str, item_id:str):
         sql = """INSERT INTO owners (user_id, item_id) VALUES (%(user_id)s, %(item_id)s) ;
                     UPDATE items SET cost_per_user = 
                         ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
-                            WHERE id = %(item_id)s ;"""
+                            WHERE id = %(item_id)s ;
+                        SELECT id FROM owners WHERE user_id = %(user_id)s AND item_id = %(item_id)s ;"""
         args = {'user_id':user_id, 'item_id':item_id}
         try:
-            exec_commit(sql,args)
-            return "Successfully assigned owner"
+            res = exec_commit_returning_one(sql,args)
+            return res[0]
         except:
             return "Failed to assign owner"
     else:
         return "Owner assignment already exists"
 
-def removeOwner(user_id:str, item_id:str):
+def removeOwner(owner_id:str):
     """removes an owner record from owners table with matching user_id & item_id
 
     Args:
@@ -163,11 +164,12 @@ def removeOwner(user_id:str, item_id:str):
     Returns:
         str: success/fail message
     """    
-    sql = """DELETE FROM owners WHERE user_id = %(user_id)s AND item_id = %(item_id)s ;                
-                UPDATE items SET cost_per_user = 
-                    ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
-                        WHERE id = %(item_id)s ;"""
-    args = {'user_id':user_id, 'item_id':item_id}
+    sql = """UPDATE items SET cost_per_user = 
+                ROUND(((SELECT total_cost FROM items WHERE id = (SELECT item_id FROM owners WHERE id = %(owner_id)s) ) / 
+                        ((SELECT COUNT(*) FROM owners WHERE item_id = (SELECT item_id FROM owners WHERE id = %(owner_id)s)) - 1))::numeric, 2) 
+                            WHERE id = (SELECT item_id FROM owners WHERE id = %(owner_id)s) ;
+                DELETE FROM owners WHERE id = %(owner_id)s ; """
+    args = {'owner_id':owner_id}
     try:
         exec_commit(sql,args)
         return "Successfully removed owner"
