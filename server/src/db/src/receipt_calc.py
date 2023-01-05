@@ -170,11 +170,11 @@ def removeOwner(owner_id:str):
                             WHERE id = (SELECT item_id FROM owners WHERE id = %(owner_id)s) ;
                 DELETE FROM owners WHERE id = %(owner_id)s ; """
     args = {'owner_id':owner_id}
-# try:
-    exec_commit(sql,args)
-    return "Successfully removed owner"
-# except:
-    # return "Failed to remove owner"
+    try:
+        exec_commit(sql,args)
+        return "Successfully removed owner"
+    except:
+        return "Failed to remove owner"
 
 
 """ACCESSORS"""
