@@ -1,8 +1,5 @@
 import math
-import os
-from turtle import update
-from src.db_utils import *
-
+from .db_utils import *
 
 """TABLE BUILDING"""
 
@@ -70,20 +67,20 @@ def editUser(user_id:str, name:str):
     res = exec_commit_returning_one(sql,args)
     return res
 
-def addItem(store:str, name:str, cost:str, tax:str):
+def addItem(store:str, name:str, tax:str, cost:str):
     """adds an item to items table
 
     Args:
         store (str): name of store
         name (str): name of item
-        cost (str): cost of item
         tax (str): tax applied to item
+        cost (str): cost of item
 
     Returns:
         str: item_id
     """    
     sql = """INSERT INTO items (store,name,tax,total_cost,cost_per_user) VALUES (%s, %s, %s, %s, %s) RETURNING id;"""
-    total_cost = math.floor((cost * (1 + (tax/100)))*100)/100
+    total_cost = math.floor((float(cost) * (1 + (float(tax)/100)))*100)/100
     args = [store,name,tax,total_cost,total_cost]
     res = exec_commit_returning_one(sql, args)
     return res
@@ -146,17 +143,18 @@ def assignOwner(user_id:str, item_id:str):
         sql = """INSERT INTO owners (user_id, item_id) VALUES (%(user_id)s, %(item_id)s) ;
                     UPDATE items SET cost_per_user = 
                         ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
-                            WHERE id = %(item_id)s ;"""
+                            WHERE id = %(item_id)s ;
+                        SELECT id FROM owners WHERE user_id = %(user_id)s AND item_id = %(item_id)s ;"""
         args = {'user_id':user_id, 'item_id':item_id}
         try:
-            exec_commit(sql,args)
-            return "Successfully assigned owner"
+            res = exec_commit_returning_one(sql,args)
+            return res[0]
         except:
             return "Failed to assign owner"
     else:
         return "Owner assignment already exists"
 
-def removeOwner(user_id:str, item_id:str):
+def removeOwner(owner_id:str):
     """removes an owner record from owners table with matching user_id & item_id
 
     Args:
@@ -166,11 +164,12 @@ def removeOwner(user_id:str, item_id:str):
     Returns:
         str: success/fail message
     """    
-    sql = """DELETE FROM owners WHERE user_id = %(user_id)s AND item_id = %(item_id)s ;                
-                UPDATE items SET cost_per_user = 
-                    ROUND(((SELECT total_cost FROM items WHERE id = %(item_id)s) / (SELECT COUNT(*) FROM owners WHERE item_id = %(item_id)s))::numeric, 2) 
-                        WHERE id = %(item_id)s ;"""
-    args = {'user_id':user_id, 'item_id':item_id}
+    sql = """UPDATE items SET cost_per_user = 
+                ROUND(((SELECT total_cost FROM items WHERE id = (SELECT item_id FROM owners WHERE id = %(owner_id)s) ) / 
+                        ((SELECT COUNT(*) FROM owners WHERE item_id = (SELECT item_id FROM owners WHERE id = %(owner_id)s)) - 1))::numeric, 2) 
+                            WHERE id = (SELECT item_id FROM owners WHERE id = %(owner_id)s) ;
+                DELETE FROM owners WHERE id = %(owner_id)s ; """
+    args = {'owner_id':owner_id}
     try:
         exec_commit(sql,args)
         return "Successfully removed owner"
@@ -203,7 +202,7 @@ def getItem(item_id:str):
     Returns:
         tuple: id, store, name, tax, total cost, cost per user
     """    
-    sql = """SELECT * FROM items WHERE id = %s ;"""
+    sql = """SELECT row_to_json(the_item) FROM (SELECT * FROM items WHERE id = %s)the_item ;"""
     args = [item_id]
     res = exec_get_all(sql, args)
     return res[0]
@@ -277,7 +276,7 @@ def getOwnerAssignment(owner_id):
     Returns:
         list: tuples of assignment pairs
     """    
-    sql = """SELECT * FROM owners WHERE id = %s ;"""
+    sql = """SELECT row_to_json(the_owner) FROM (SELECT * FROM owners WHERE id = %s)the_owner ;"""
     args = [owner_id]
     res = exec_get_all(sql, args)
     return res
@@ -291,10 +290,10 @@ def getUser(user_id):
     Returns:
         list: user id and user name
     """    
-    sql = """SELECT row_to_json(user) FROM (SELECT * FROM users WHERE id = %s)user ;"""
+    sql = """SELECT row_to_json(the_user) FROM (SELECT * FROM users WHERE id = %s)the_user ;"""
     args = [user_id]
     res = exec_get_all(sql, args)
-    return res
+    return res[0]
 
 def getAssignments(user_id):
     """retrieves all owners
