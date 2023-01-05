@@ -29,6 +29,8 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_put_user(self):
+        """tests editing a user with a PUT call
+        """        
         data = dict(user_name = "Bobster")
         jdata = json.dumps(data)
         hdr = {'content-type': 'application/json'}
@@ -40,6 +42,8 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_delete_user(self):
+        """tests removing a user with a DELETE call
+        """        
         delete_rest_call(self,"http://localhost:5000/user/1")
 
         user_count = exec_get_one('SELECT COUNT(*) FROM users')
@@ -69,6 +73,8 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_put_item(self):
+        """tests editing an item with a PUT call
+        """        
         data = dict(store = "Target", name = "Potats",  tax = 8, cost = 9.99, cost_per_user = 9.99)
         jdata = json.dumps(data)
         hdr = {'content-type': 'application/json'}
@@ -80,6 +86,8 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_delete_item(self):
+        """tests removing an item with a DELETE call
+        """        
         delete_rest_call(self,"http://localhost:5000/item/1")
 
         item_count = exec_get_one('SELECT COUNT(*) FROM items')
@@ -89,14 +97,14 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_get_owner(self):
-        """tests retrieving a owner with a GET call
+        """tests retrieving an owner with a GET call
         """        
         actual = get_rest_call(self, "http://localhost:5000/owner/1")
         expected = [[{'id': 1, 'item_id': 3, 'user_id': 1}]]
         self.assertEqual(actual,expected)
     
     def test_post_owner(self):
-        """tests creating a owner with a POST call
+        """tests creating an owner with a POST call
         """        
         data = dict(user_id = 1, item_id = 2)
         jdata = json.dumps(data)
@@ -109,6 +117,8 @@ class TestReceiptCalcApi(unittest.TestCase):
         self.assertEqual(actual,expected)
     
     def test_delete_owner(self):
+        """tests removing an owner with a DELETE call
+        """        
         delete_rest_call(self,"http://localhost:5000/owner/1")
 
         owner_count = exec_get_one('SELECT COUNT(*) FROM owners')
