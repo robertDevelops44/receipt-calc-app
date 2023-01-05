@@ -88,4 +88,33 @@ class TestReceiptCalcApi(unittest.TestCase):
         expected = 2
         self.assertEqual(actual, expected)
 
+    def test_get_owner(self):
+        """tests retrieving a owner with a GET call
+        """        
+        actual = get_rest_call(self, "http://localhost:5000/owner/1")
+        expected = [[{'id': 1, 'item_id': 3, 'user_id': 1}]]
+        self.assertEqual(actual,expected)
+    
+    def test_post_owner(self):
+        """tests creating a owner with a POST call
+        """        
+        data = dict(user_id = 1, item_id = 2)
+        jdata = json.dumps(data)
+        hdr = {'content-type': 'application/json'}
+        post_rest_call(self,"http://localhost:5000/owners",jdata,hdr)
+
+        res = get_rest_call(self, "http://localhost:5000/owner/3")
+        actual = res 
+        expected = [[{'id': 3, 'item_id': 2, 'user_id': 1}]]
+        self.assertEqual(actual,expected)
+    
+    def test_delete_owner(self):
+        delete_rest_call(self,"http://localhost:5000/owner/1")
+
+        owner_count = exec_get_one('SELECT COUNT(*) FROM owners')
+
+        actual = owner_count[0]
+        expected = 1
+        self.assertEqual(actual,expected)
+
 
