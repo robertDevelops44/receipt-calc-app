@@ -127,4 +127,17 @@ class TestReceiptCalcApi(unittest.TestCase):
         expected = 1
         self.assertEqual(actual,expected)
 
+    def test_get_user_cost(self):
+        """tests retrieving total cost of a user
+        """
+        data = dict(user_id = 1, item_id = 1)
+        jdata = json.dumps(data)
+        hdr = {'content-type': 'application/json'}
+        post_rest_call(self,"http://localhost:5000/owners",jdata,hdr)
+
+        res = get_rest_call(self, "http://localhost:5000/total/1")
+        actual = res
+        expected = 26.34
+        self.assertEqual(actual,expected)
+
 
