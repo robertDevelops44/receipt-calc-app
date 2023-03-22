@@ -5,4 +5,4 @@ Calculates item purchases/expenses among multiple users
 **UI In Progress**
 
 # Upcoming
-React based front-end
+React based UI - connected to PostgreSQL database with RESTful APIs
